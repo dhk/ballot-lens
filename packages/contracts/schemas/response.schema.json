@@ -1,0 +1,1358 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "anyOf": [
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": { "type": "string", "const": "0.1.0" },
+        "ok": { "type": "boolean", "const": false },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "INVALID_INPUT",
+                "INTERNAL_ERROR",
+                "UNSUPPORTED_VERSION",
+                "MISSING_RELEASE",
+                "SCOPE_MISMATCH",
+                "UNAVAILABLE_ANALYSIS",
+                "INVALID_PACK",
+                "CANCELLED",
+                "PAYLOAD_TOO_LARGE"
+              ]
+            },
+            "message": { "type": "string", "minLength": 1, "maxLength": 10000 }
+          },
+          "required": ["code", "message"],
+          "additionalProperties": false
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 10000 }
+        },
+        "releases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "jurisdictionId": {
+                  "type": "string",
+                  "maxLength": 160,
+                  "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                },
+                "electionId": {
+                  "type": "string",
+                  "maxLength": 160,
+                  "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                }
+              },
+              "required": ["jurisdictionId", "electionId"],
+              "additionalProperties": false
+            },
+            { "type": "null" }
+          ]
+        },
+        "coverage": { "type": "string", "const": "unavailable" },
+        "provenance": { "type": "null" },
+        "data": { "type": "null" }
+      },
+      "required": [
+        "contractVersion",
+        "ok",
+        "error",
+        "warnings",
+        "releases",
+        "scope",
+        "coverage",
+        "provenance",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": { "type": "string", "const": "0.1.0" },
+        "releases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "coverage": {
+          "type": "string",
+          "enum": ["reviewed", "pending", "unavailable", "stale", "incomplete"]
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 10000 }
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "synthetic": { "type": "boolean" },
+            "reviewStatus": {
+              "type": "string",
+              "enum": ["synthetic", "approved"]
+            },
+            "sourceRevisionIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^source_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            }
+          },
+          "required": ["synthetic", "reviewStatus", "sourceRevisionIds"],
+          "additionalProperties": false
+        },
+        "ok": { "type": "boolean", "const": true },
+        "operation": { "type": "string", "const": "list_elections" },
+        "data": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "maxLength": 160,
+                    "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                  },
+                  "jurisdictionId": {
+                    "type": "string",
+                    "maxLength": 160,
+                    "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  }
+                },
+                "required": ["id", "jurisdictionId", "date", "title"],
+                "additionalProperties": false
+              }
+            },
+            "pagination": {
+              "type": "object",
+              "properties": {
+                "offset": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "limit": { "type": "integer", "minimum": 1, "maximum": 100 },
+                "nextOffset": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "total": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": ["offset", "limit", "nextOffset", "total"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["items", "pagination"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "releases",
+        "scope",
+        "coverage",
+        "warnings",
+        "provenance",
+        "ok",
+        "operation",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": { "type": "string", "const": "0.1.0" },
+        "releases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "coverage": {
+          "type": "string",
+          "enum": ["reviewed", "pending", "unavailable", "stale", "incomplete"]
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 10000 }
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "synthetic": { "type": "boolean" },
+            "reviewStatus": {
+              "type": "string",
+              "enum": ["synthetic", "approved"]
+            },
+            "sourceRevisionIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^source_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            }
+          },
+          "required": ["synthetic", "reviewStatus", "sourceRevisionIds"],
+          "additionalProperties": false
+        },
+        "ok": { "type": "boolean", "const": true },
+        "operation": { "type": "string", "const": "list_measures" },
+        "data": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "maxLength": 160,
+                    "pattern": "^measure:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                  },
+                  "label": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  },
+                  "scope": {
+                    "type": "object",
+                    "properties": {
+                      "jurisdictionId": {
+                        "type": "string",
+                        "maxLength": 160,
+                        "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                      },
+                      "electionId": {
+                        "type": "string",
+                        "maxLength": 160,
+                        "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                      }
+                    },
+                    "required": ["jurisdictionId", "electionId"],
+                    "additionalProperties": false
+                  },
+                  "coverage": {
+                    "type": "string",
+                    "enum": [
+                      "reviewed",
+                      "pending",
+                      "unavailable",
+                      "stale",
+                      "incomplete"
+                    ]
+                  }
+                },
+                "required": ["id", "label", "title", "scope", "coverage"],
+                "additionalProperties": false
+              }
+            },
+            "pagination": {
+              "type": "object",
+              "properties": {
+                "offset": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "limit": { "type": "integer", "minimum": 1, "maximum": 100 },
+                "nextOffset": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "total": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": ["offset", "limit", "nextOffset", "total"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["items", "pagination"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "releases",
+        "scope",
+        "coverage",
+        "warnings",
+        "provenance",
+        "ok",
+        "operation",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": { "type": "string", "const": "0.1.0" },
+        "releases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "coverage": {
+          "type": "string",
+          "enum": ["reviewed", "pending", "unavailable", "stale", "incomplete"]
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 10000 }
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "synthetic": { "type": "boolean" },
+            "reviewStatus": {
+              "type": "string",
+              "enum": ["synthetic", "approved"]
+            },
+            "sourceRevisionIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^source_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            }
+          },
+          "required": ["synthetic", "reviewStatus", "sourceRevisionIds"],
+          "additionalProperties": false
+        },
+        "ok": { "type": "boolean", "const": true },
+        "operation": { "type": "string", "const": "get_measure_brief" },
+        "data": {
+          "type": "object",
+          "properties": {
+            "measure": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "maxLength": 160,
+                  "pattern": "^measure:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                },
+                "scope": {
+                  "type": "object",
+                  "properties": {
+                    "jurisdictionId": {
+                      "type": "string",
+                      "maxLength": 160,
+                      "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                    },
+                    "electionId": {
+                      "type": "string",
+                      "maxLength": 160,
+                      "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                    }
+                  },
+                  "required": ["jurisdictionId", "electionId"],
+                  "additionalProperties": false
+                },
+                "coverage": {
+                  "type": "string",
+                  "enum": [
+                    "reviewed",
+                    "pending",
+                    "unavailable",
+                    "stale",
+                    "incomplete"
+                  ]
+                }
+              },
+              "required": ["id", "label", "title", "scope", "coverage"],
+              "additionalProperties": false
+            },
+            "findings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "maxLength": 160,
+                    "pattern": "^finding_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                  },
+                  "claimId": {
+                    "type": "string",
+                    "maxLength": 160,
+                    "pattern": "^claim:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                  },
+                  "measureId": {
+                    "type": "string",
+                    "maxLength": 160,
+                    "pattern": "^measure:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                  },
+                  "assertion": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  },
+                  "scope": {
+                    "type": "object",
+                    "properties": {
+                      "jurisdictionId": {
+                        "type": "string",
+                        "maxLength": 160,
+                        "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                      },
+                      "electionId": {
+                        "type": "string",
+                        "maxLength": 160,
+                        "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                      }
+                    },
+                    "required": ["jurisdictionId", "electionId"],
+                    "additionalProperties": false
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "official_text",
+                      "fiscal_estimate",
+                      "advocacy_argument",
+                      "contextual_evidence",
+                      "editorial_synthesis"
+                    ]
+                  },
+                  "evidence": {
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "sourceRevisionId": {
+                          "type": "string",
+                          "maxLength": 160,
+                          "pattern": "^source_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                        },
+                        "excerpt": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 10000
+                        },
+                        "start": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "end": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "section": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 10000
+                            },
+                            { "type": "null" }
+                          ]
+                        },
+                        "page": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "exclusiveMinimum": 0,
+                              "maximum": 9007199254740991
+                            },
+                            { "type": "null" }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "sourceRevisionId",
+                        "excerpt",
+                        "start",
+                        "end",
+                        "section",
+                        "page"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "counterevidence": {
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "sourceRevisionId": {
+                          "type": "string",
+                          "maxLength": 160,
+                          "pattern": "^source_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                        },
+                        "excerpt": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 10000
+                        },
+                        "start": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "end": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "section": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 10000
+                            },
+                            { "type": "null" }
+                          ]
+                        },
+                        "page": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "exclusiveMinimum": 0,
+                              "maximum": 9007199254740991
+                            },
+                            { "type": "null" }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "sourceRevisionId",
+                        "excerpt",
+                        "start",
+                        "end",
+                        "section",
+                        "page"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "uncertainty": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "draft",
+                      "in_review",
+                      "approved",
+                      "rejected",
+                      "superseded",
+                      "retracted"
+                    ]
+                  },
+                  "stale": { "type": "boolean" },
+                  "reviewer": {
+                    "anyOf": [
+                      { "type": "string", "minLength": 1, "maxLength": 10000 },
+                      { "type": "null" }
+                    ]
+                  },
+                  "reviewedAt": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      { "type": "null" }
+                    ]
+                  },
+                  "supersedes": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 160,
+                        "pattern": "^finding_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                      },
+                      { "type": "null" }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "claimId",
+                  "measureId",
+                  "assertion",
+                  "scope",
+                  "type",
+                  "evidence",
+                  "counterevidence",
+                  "uncertainty",
+                  "state",
+                  "stale",
+                  "reviewer",
+                  "reviewedAt",
+                  "supersedes"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["measure", "findings"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "releases",
+        "scope",
+        "coverage",
+        "warnings",
+        "provenance",
+        "ok",
+        "operation",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": { "type": "string", "const": "0.1.0" },
+        "releases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "coverage": {
+          "type": "string",
+          "enum": ["reviewed", "pending", "unavailable", "stale", "incomplete"]
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 10000 }
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "synthetic": { "type": "boolean" },
+            "reviewStatus": {
+              "type": "string",
+              "enum": ["synthetic", "approved"]
+            },
+            "sourceRevisionIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^source_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            }
+          },
+          "required": ["synthetic", "reviewStatus", "sourceRevisionIds"],
+          "additionalProperties": false
+        },
+        "ok": { "type": "boolean", "const": true },
+        "operation": { "type": "string", "const": "get_evidence" },
+        "data": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "maxLength": 160,
+                    "pattern": "^finding_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                  },
+                  "claimId": {
+                    "type": "string",
+                    "maxLength": 160,
+                    "pattern": "^claim:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                  },
+                  "measureId": {
+                    "type": "string",
+                    "maxLength": 160,
+                    "pattern": "^measure:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                  },
+                  "assertion": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  },
+                  "scope": {
+                    "type": "object",
+                    "properties": {
+                      "jurisdictionId": {
+                        "type": "string",
+                        "maxLength": 160,
+                        "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                      },
+                      "electionId": {
+                        "type": "string",
+                        "maxLength": 160,
+                        "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                      }
+                    },
+                    "required": ["jurisdictionId", "electionId"],
+                    "additionalProperties": false
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "official_text",
+                      "fiscal_estimate",
+                      "advocacy_argument",
+                      "contextual_evidence",
+                      "editorial_synthesis"
+                    ]
+                  },
+                  "evidence": {
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "sourceRevisionId": {
+                          "type": "string",
+                          "maxLength": 160,
+                          "pattern": "^source_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                        },
+                        "excerpt": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 10000
+                        },
+                        "start": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "end": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "section": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 10000
+                            },
+                            { "type": "null" }
+                          ]
+                        },
+                        "page": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "exclusiveMinimum": 0,
+                              "maximum": 9007199254740991
+                            },
+                            { "type": "null" }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "sourceRevisionId",
+                        "excerpt",
+                        "start",
+                        "end",
+                        "section",
+                        "page"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "counterevidence": {
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "sourceRevisionId": {
+                          "type": "string",
+                          "maxLength": 160,
+                          "pattern": "^source_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                        },
+                        "excerpt": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 10000
+                        },
+                        "start": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        "end": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 9007199254740991
+                        },
+                        "section": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 10000
+                            },
+                            { "type": "null" }
+                          ]
+                        },
+                        "page": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "exclusiveMinimum": 0,
+                              "maximum": 9007199254740991
+                            },
+                            { "type": "null" }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "sourceRevisionId",
+                        "excerpt",
+                        "start",
+                        "end",
+                        "section",
+                        "page"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "uncertainty": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "draft",
+                      "in_review",
+                      "approved",
+                      "rejected",
+                      "superseded",
+                      "retracted"
+                    ]
+                  },
+                  "stale": { "type": "boolean" },
+                  "reviewer": {
+                    "anyOf": [
+                      { "type": "string", "minLength": 1, "maxLength": 10000 },
+                      { "type": "null" }
+                    ]
+                  },
+                  "reviewedAt": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      { "type": "null" }
+                    ]
+                  },
+                  "supersedes": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 160,
+                        "pattern": "^finding_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                      },
+                      { "type": "null" }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "claimId",
+                  "measureId",
+                  "assertion",
+                  "scope",
+                  "type",
+                  "evidence",
+                  "counterevidence",
+                  "uncertainty",
+                  "state",
+                  "stale",
+                  "reviewer",
+                  "reviewedAt",
+                  "supersedes"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "pagination": {
+              "type": "object",
+              "properties": {
+                "offset": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "limit": { "type": "integer", "minimum": 1, "maximum": 100 },
+                "nextOffset": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "total": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": ["offset", "limit", "nextOffset", "total"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["items", "pagination"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "releases",
+        "scope",
+        "coverage",
+        "warnings",
+        "provenance",
+        "ok",
+        "operation",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": { "type": "string", "const": "0.1.0" },
+        "releases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "coverage": {
+          "type": "string",
+          "enum": ["reviewed", "pending", "unavailable", "stale", "incomplete"]
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1, "maxLength": 10000 }
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "synthetic": { "type": "boolean" },
+            "reviewStatus": {
+              "type": "string",
+              "enum": ["synthetic", "approved"]
+            },
+            "sourceRevisionIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^source_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            }
+          },
+          "required": ["synthetic", "reviewStatus", "sourceRevisionIds"],
+          "additionalProperties": false
+        },
+        "ok": { "type": "boolean", "const": true },
+        "operation": { "type": "string", "const": "get_source_locator" },
+        "data": {
+          "type": "object",
+          "properties": {
+            "locator": {
+              "type": "object",
+              "properties": {
+                "sourceRevisionId": {
+                  "type": "string",
+                  "maxLength": 160,
+                  "pattern": "^source_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                },
+                "excerpt": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                },
+                "start": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "end": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "section": {
+                  "anyOf": [
+                    { "type": "string", "minLength": 1, "maxLength": 10000 },
+                    { "type": "null" }
+                  ]
+                },
+                "page": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    { "type": "null" }
+                  ]
+                }
+              },
+              "required": [
+                "sourceRevisionId",
+                "excerpt",
+                "start",
+                "end",
+                "section",
+                "page"
+              ],
+              "additionalProperties": false
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "maxLength": 160,
+                  "pattern": "^source_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                },
+                "sourceId": {
+                  "type": "string",
+                  "maxLength": 160,
+                  "pattern": "^source:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                },
+                "publisher": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                },
+                "url": { "type": "string", "format": "uri" },
+                "retrievedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                },
+                "publishedAt": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    { "type": "null" }
+                  ]
+                },
+                "mediaType": { "type": "string", "const": "text/plain" },
+                "snapshotHash": {
+                  "type": "string",
+                  "pattern": "^sha256:[a-f0-9]{64}$"
+                },
+                "rights": {
+                  "type": "string",
+                  "enum": ["redistributable", "unknown", "restricted"]
+                },
+                "supersededBy": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 160,
+                      "pattern": "^source_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                    },
+                    { "type": "null" }
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "sourceId",
+                "publisher",
+                "title",
+                "url",
+                "retrievedAt",
+                "publishedAt",
+                "mediaType",
+                "snapshotHash",
+                "rights",
+                "supersededBy"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": ["locator", "source"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "releases",
+        "scope",
+        "coverage",
+        "warnings",
+        "provenance",
+        "ok",
+        "operation",
+        "data"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

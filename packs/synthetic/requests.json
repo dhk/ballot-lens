@@ -1,0 +1,194 @@
+[
+  {
+    "contractVersion": "0.1.0",
+    "operation": "list_elections",
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "inputs": {}
+  },
+  {
+    "contractVersion": "0.1.0",
+    "operation": "list_measures",
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "inputs": {}
+  },
+  {
+    "contractVersion": "0.1.0",
+    "operation": "get_measure_brief",
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "inputs": {
+      "measureId": "measure:synthetic:demo-a"
+    }
+  },
+  {
+    "contractVersion": "0.1.0",
+    "operation": "get_evidence",
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "inputs": {
+      "measureId": "measure:synthetic:demo-a"
+    }
+  },
+  {
+    "contractVersion": "0.1.0",
+    "operation": "list_organizations",
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "inputs": {}
+  },
+  {
+    "contractVersion": "0.1.0",
+    "operation": "get_endorsements",
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "inputs": {
+      "measureId": "measure:synthetic:demo-a"
+    }
+  },
+  {
+    "contractVersion": "0.1.0",
+    "operation": "calculate_endorsement_lens",
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "inputs": {
+      "measureId": "measure:synthetic:demo-a",
+      "organizations": []
+    }
+  },
+  {
+    "contractVersion": "0.1.0",
+    "operation": "list_circumstance_questions",
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "inputs": {
+      "measureId": "measure:synthetic:demo-a"
+    }
+  },
+  {
+    "contractVersion": "0.1.0",
+    "operation": "evaluate_personal_impact",
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "inputs": {
+      "measureId": "measure:synthetic:demo-a",
+      "answers": {}
+    }
+  },
+  {
+    "contractVersion": "0.1.0",
+    "operation": "build_worksheet",
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "inputs": {
+      "measureId": "measure:synthetic:demo-a",
+      "organizations": [],
+      "answers": {}
+    }
+  },
+  {
+    "contractVersion": "0.1.0",
+    "operation": "get_source_locator",
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "inputs": {
+      "locator": {
+        "sourceRevisionId": "source_revision:synthetic:text-v1",
+        "excerpt": "The fictional demonstration program lasts one year.",
+        "start": 65,
+        "end": 116,
+        "section": "Section 1",
+        "page": null
+      }
+    }
+  }
+]

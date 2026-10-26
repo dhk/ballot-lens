@@ -227,3 +227,8 @@ coverage/
 *.tsbuildinfo
 .DS_Store
 .scratch/
+
+# Local immutable release stores
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

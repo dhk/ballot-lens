@@ -1,0 +1,355 @@
+[
+  {
+    "contractVersion": "0.1.0",
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "coverage": "incomplete",
+    "warnings": [
+      "SYNTHETIC DATA: not real ballot measures or human editorial approval."
+    ],
+    "provenance": {
+      "synthetic": true,
+      "reviewStatus": "synthetic",
+      "sourceRevisionIds": []
+    },
+    "ok": true,
+    "operation": "list_elections",
+    "data": {
+      "items": [
+        {
+          "id": "election:synthetic:2099-11-03",
+          "jurisdictionId": "jurisdiction:synthetic:demo",
+          "date": "2099-11-03",
+          "title": "SYNTHETIC demonstration election"
+        }
+      ],
+      "pagination": {
+        "offset": 0,
+        "limit": 50,
+        "nextOffset": null,
+        "total": 1
+      }
+    }
+  },
+  {
+    "contractVersion": "0.1.0",
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "coverage": "incomplete",
+    "warnings": [
+      "SYNTHETIC DATA: not real ballot measures or human editorial approval."
+    ],
+    "provenance": {
+      "synthetic": true,
+      "reviewStatus": "synthetic",
+      "sourceRevisionIds": []
+    },
+    "ok": true,
+    "operation": "list_measures",
+    "data": {
+      "items": [
+        {
+          "id": "measure:synthetic:demo-a",
+          "label": "DEMO A",
+          "title": "SYNTHETIC one-year program",
+          "scope": {
+            "jurisdictionId": "jurisdiction:synthetic:demo",
+            "electionId": "election:synthetic:2099-11-03"
+          },
+          "coverage": "reviewed"
+        },
+        {
+          "id": "measure:synthetic:demo-b",
+          "label": "DEMO B",
+          "title": "SYNTHETIC pending analysis",
+          "scope": {
+            "jurisdictionId": "jurisdiction:synthetic:demo",
+            "electionId": "election:synthetic:2099-11-03"
+          },
+          "coverage": "pending"
+        }
+      ],
+      "pagination": {
+        "offset": 0,
+        "limit": 50,
+        "nextOffset": null,
+        "total": 2
+      }
+    }
+  },
+  {
+    "contractVersion": "0.1.0",
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "coverage": "reviewed",
+    "warnings": [
+      "SYNTHETIC DATA: not real ballot measures or human editorial approval."
+    ],
+    "provenance": {
+      "synthetic": true,
+      "reviewStatus": "synthetic",
+      "sourceRevisionIds": ["source_revision:synthetic:text-v1"]
+    },
+    "ok": true,
+    "operation": "get_measure_brief",
+    "data": {
+      "measure": {
+        "id": "measure:synthetic:demo-a",
+        "label": "DEMO A",
+        "title": "SYNTHETIC one-year program",
+        "scope": {
+          "jurisdictionId": "jurisdiction:synthetic:demo",
+          "electionId": "election:synthetic:2099-11-03"
+        },
+        "coverage": "reviewed"
+      },
+      "findings": [
+        {
+          "id": "finding_revision:synthetic:duration-v1",
+          "claimId": "claim:synthetic:duration-v1",
+          "measureId": "measure:synthetic:demo-a",
+          "assertion": "The fictional program has a one-year duration.",
+          "scope": {
+            "jurisdictionId": "jurisdiction:synthetic:demo",
+            "electionId": "election:synthetic:2099-11-03"
+          },
+          "type": "official_text",
+          "evidence": [
+            {
+              "sourceRevisionId": "source_revision:synthetic:text-v1",
+              "excerpt": "The fictional demonstration program lasts one year.",
+              "start": 65,
+              "end": 116,
+              "section": "Section 1",
+              "page": null
+            }
+          ],
+          "counterevidence": [],
+          "uncertainty": "Synthetic fixture only; no real-world assertion.",
+          "state": "approved",
+          "stale": false,
+          "reviewer": "Synthetic human reviewer",
+          "reviewedAt": "2099-01-01T00:00:00Z",
+          "supersedes": null
+        }
+      ]
+    }
+  },
+  {
+    "contractVersion": "0.1.0",
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "coverage": "reviewed",
+    "warnings": [
+      "SYNTHETIC DATA: not real ballot measures or human editorial approval."
+    ],
+    "provenance": {
+      "synthetic": true,
+      "reviewStatus": "synthetic",
+      "sourceRevisionIds": ["source_revision:synthetic:text-v1"]
+    },
+    "ok": true,
+    "operation": "get_evidence",
+    "data": {
+      "items": [
+        {
+          "id": "finding_revision:synthetic:duration-v1",
+          "claimId": "claim:synthetic:duration-v1",
+          "measureId": "measure:synthetic:demo-a",
+          "assertion": "The fictional program has a one-year duration.",
+          "scope": {
+            "jurisdictionId": "jurisdiction:synthetic:demo",
+            "electionId": "election:synthetic:2099-11-03"
+          },
+          "type": "official_text",
+          "evidence": [
+            {
+              "sourceRevisionId": "source_revision:synthetic:text-v1",
+              "excerpt": "The fictional demonstration program lasts one year.",
+              "start": 65,
+              "end": 116,
+              "section": "Section 1",
+              "page": null
+            }
+          ],
+          "counterevidence": [],
+          "uncertainty": "Synthetic fixture only; no real-world assertion.",
+          "state": "approved",
+          "stale": false,
+          "reviewer": "Synthetic human reviewer",
+          "reviewedAt": "2099-01-01T00:00:00Z",
+          "supersedes": null
+        }
+      ],
+      "pagination": {
+        "offset": 0,
+        "limit": 50,
+        "nextOffset": null,
+        "total": 1
+      }
+    }
+  },
+  {
+    "contractVersion": "0.1.0",
+    "ok": false,
+    "error": {
+      "code": "UNAVAILABLE_ANALYSIS",
+      "message": "This operation is specified but not implemented in M0."
+    },
+    "warnings": [],
+    "releases": [],
+    "scope": null,
+    "coverage": "unavailable",
+    "provenance": null,
+    "data": null
+  },
+  {
+    "contractVersion": "0.1.0",
+    "ok": false,
+    "error": {
+      "code": "UNAVAILABLE_ANALYSIS",
+      "message": "This operation is specified but not implemented in M0."
+    },
+    "warnings": [],
+    "releases": [],
+    "scope": null,
+    "coverage": "unavailable",
+    "provenance": null,
+    "data": null
+  },
+  {
+    "contractVersion": "0.1.0",
+    "ok": false,
+    "error": {
+      "code": "UNAVAILABLE_ANALYSIS",
+      "message": "This operation is specified but not implemented in M0."
+    },
+    "warnings": [],
+    "releases": [],
+    "scope": null,
+    "coverage": "unavailable",
+    "provenance": null,
+    "data": null
+  },
+  {
+    "contractVersion": "0.1.0",
+    "ok": false,
+    "error": {
+      "code": "UNAVAILABLE_ANALYSIS",
+      "message": "This operation is specified but not implemented in M0."
+    },
+    "warnings": [],
+    "releases": [],
+    "scope": null,
+    "coverage": "unavailable",
+    "provenance": null,
+    "data": null
+  },
+  {
+    "contractVersion": "0.1.0",
+    "ok": false,
+    "error": {
+      "code": "UNAVAILABLE_ANALYSIS",
+      "message": "This operation is specified but not implemented in M0."
+    },
+    "warnings": [],
+    "releases": [],
+    "scope": null,
+    "coverage": "unavailable",
+    "provenance": null,
+    "data": null
+  },
+  {
+    "contractVersion": "0.1.0",
+    "ok": false,
+    "error": {
+      "code": "UNAVAILABLE_ANALYSIS",
+      "message": "This operation is specified but not implemented in M0."
+    },
+    "warnings": [],
+    "releases": [],
+    "scope": null,
+    "coverage": "unavailable",
+    "provenance": null,
+    "data": null
+  },
+  {
+    "contractVersion": "0.1.0",
+    "releases": [
+      {
+        "packId": "pack:synthetic:demo",
+        "releaseId": "release:synthetic:demo-v1"
+      }
+    ],
+    "scope": {
+      "jurisdictionId": "jurisdiction:synthetic:demo",
+      "electionId": "election:synthetic:2099-11-03"
+    },
+    "coverage": "incomplete",
+    "warnings": [
+      "SYNTHETIC DATA: not real ballot measures or human editorial approval."
+    ],
+    "provenance": {
+      "synthetic": true,
+      "reviewStatus": "synthetic",
+      "sourceRevisionIds": ["source_revision:synthetic:text-v1"]
+    },
+    "ok": true,
+    "operation": "get_source_locator",
+    "data": {
+      "locator": {
+        "sourceRevisionId": "source_revision:synthetic:text-v1",
+        "excerpt": "The fictional demonstration program lasts one year.",
+        "start": 65,
+        "end": 116,
+        "section": "Section 1",
+        "page": null
+      },
+      "source": {
+        "id": "source_revision:synthetic:text-v1",
+        "sourceId": "source:synthetic:text",
+        "publisher": "Synthetic fixture author",
+        "title": "SYNTHETIC program text",
+        "url": "https://example.invalid/synthetic/demo-a",
+        "retrievedAt": "2099-01-01T00:00:00Z",
+        "publishedAt": null,
+        "mediaType": "text/plain",
+        "snapshotHash": "sha256:61d91a4351878dc737f0fbc6f2d1d6e491d1bcb929d424461ed319eec44ced41",
+        "rights": "redistributable",
+        "supersededBy": null
+      }
+    }
+  }
+]

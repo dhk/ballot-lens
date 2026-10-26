@@ -10,4 +10,5 @@ Read README.md, docs/requirements.md, docs/roadmap.md, and CONTRIBUTING.md befor
 - Never fabricate endorsements, auto-approve editorial content, or present synthetic measures as real.
 - Leave real pilot selection, review rubric, organization inclusion, rule approval, public release, and consumer interface selection to authorized humans.
 - Record specification conflicts and seek resolution. Do not silently resolve the open decisions listed in the requirements.
-- The current repository is documentation only. Do not claim M0 or release gates are complete. Add and run appropriate checks as implementation is introduced.
+- Use Node 24 and run `npm run check` for code changes. Update generated schemas with `npm run schemas` when contracts change.
+- The M0 technical slice uses synthetic data only. Do not claim overall M0 or real-data/public-release gates are complete; inventory reconciliation and human decisions remain open. See docs/backlog.md.

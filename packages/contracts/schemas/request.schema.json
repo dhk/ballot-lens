@@ -1,0 +1,953 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "releases": {
+          "minItems": 1,
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "operation": { "type": "string", "const": "list_elections" },
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "offset": {
+              "default": 0,
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "limit": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "releases",
+        "operation",
+        "inputs"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "releases": {
+          "minItems": 1,
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "operation": { "type": "string", "const": "list_measures" },
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "offset": {
+              "default": 0,
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "limit": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "releases",
+        "operation",
+        "inputs"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "releases": {
+          "minItems": 1,
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "operation": { "type": "string", "const": "get_measure_brief" },
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "measureId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^measure:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["measureId"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "releases",
+        "operation",
+        "inputs"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "releases": {
+          "minItems": 1,
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "operation": { "type": "string", "const": "get_evidence" },
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "measureId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^measure:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "offset": {
+              "default": 0,
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "limit": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          "required": ["measureId"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "releases",
+        "operation",
+        "inputs"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "releases": {
+          "minItems": 1,
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "operation": { "type": "string", "const": "list_organizations" },
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "offset": {
+              "default": 0,
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "limit": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "releases",
+        "operation",
+        "inputs"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "releases": {
+          "minItems": 1,
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "operation": { "type": "string", "const": "get_endorsements" },
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "measureId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^measure:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "offset": {
+              "default": 0,
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "limit": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          "required": ["measureId"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "releases",
+        "operation",
+        "inputs"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "releases": {
+          "minItems": 1,
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "operation": {
+          "type": "string",
+          "const": "calculate_endorsement_lens"
+        },
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "measureId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^measure:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "organizations": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "organizationId": {
+                    "type": "string",
+                    "maxLength": 160,
+                    "pattern": "^organization:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                  },
+                  "weight": {
+                    "default": 1,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 3
+                  }
+                },
+                "required": ["organizationId"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["measureId", "organizations"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "releases",
+        "operation",
+        "inputs"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "releases": {
+          "minItems": 1,
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "operation": {
+          "type": "string",
+          "const": "list_circumstance_questions"
+        },
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "measureId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^measure:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "offset": {
+              "default": 0,
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "limit": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          "required": ["measureId"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "releases",
+        "operation",
+        "inputs"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "releases": {
+          "minItems": 1,
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "operation": { "type": "string", "const": "evaluate_personal_impact" },
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "measureId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^measure:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "answers": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  { "type": "boolean" },
+                  {
+                    "type": "integer",
+                    "minimum": -1000000000,
+                    "maximum": 1000000000
+                  },
+                  { "type": "string", "const": "unknown" }
+                ]
+              },
+              "maxProperties": 100
+            }
+          },
+          "required": ["measureId", "answers"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "releases",
+        "operation",
+        "inputs"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "releases": {
+          "minItems": 1,
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "operation": { "type": "string", "const": "build_worksheet" },
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "measureId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^measure:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "organizations": {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "organizationId": {
+                    "type": "string",
+                    "maxLength": 160,
+                    "pattern": "^organization:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                  },
+                  "weight": {
+                    "default": 1,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 3
+                  }
+                },
+                "required": ["organizationId"],
+                "additionalProperties": false
+              }
+            },
+            "answers": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  { "type": "boolean" },
+                  {
+                    "type": "integer",
+                    "minimum": -1000000000,
+                    "maximum": 1000000000
+                  },
+                  { "type": "string", "const": "unknown" }
+                ]
+              },
+              "maxProperties": 100
+            }
+          },
+          "required": ["measureId", "organizations", "answers"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "releases",
+        "operation",
+        "inputs"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "scope": {
+          "type": "object",
+          "properties": {
+            "jurisdictionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^jurisdiction:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            },
+            "electionId": {
+              "type": "string",
+              "maxLength": 160,
+              "pattern": "^election:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+            }
+          },
+          "required": ["jurisdictionId", "electionId"],
+          "additionalProperties": false
+        },
+        "releases": {
+          "minItems": 1,
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^pack:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              },
+              "releaseId": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^release:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+              }
+            },
+            "required": ["packId", "releaseId"],
+            "additionalProperties": false
+          }
+        },
+        "operation": { "type": "string", "const": "get_source_locator" },
+        "inputs": {
+          "type": "object",
+          "properties": {
+            "locator": {
+              "type": "object",
+              "properties": {
+                "sourceRevisionId": {
+                  "type": "string",
+                  "maxLength": 160,
+                  "pattern": "^source_revision:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+                },
+                "excerpt": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                },
+                "start": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "end": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "section": {
+                  "anyOf": [
+                    { "type": "string", "minLength": 1, "maxLength": 10000 },
+                    { "type": "null" }
+                  ]
+                },
+                "page": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    { "type": "null" }
+                  ]
+                }
+              },
+              "required": [
+                "sourceRevisionId",
+                "excerpt",
+                "start",
+                "end",
+                "section",
+                "page"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": ["locator"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "releases",
+        "operation",
+        "inputs"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

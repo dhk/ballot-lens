@@ -1,0 +1,19 @@
+# Dependency-ordered backlog
+
+This file is the initial issue backlog. Owners are roles; assigning real reviewers remains a maintainer decision.
+
+| ID     | Work / requirements                                                                                            | Owner                           | Depends on                              | Status                                      |
+| ------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------- | --------------------------------------- | ------------------------------------------- |
+| M0-01  | Strict TS, CI, schemas, synthetic offline pack, immutable storage; A-01–A-04, D-01–D-04, C-01–C-04, T-01       | Codex                           | —                                       | Open: implemented in M0 PR; review pending  |
+| M0-02  | Reconcile Elections inventory, collect exact source versions/rights; R-02, D-02, T-05                          | Editorial lead + Codex          | Restore readable official source access | Provisional discovery recorded; incomplete  |
+| M0-03  | Approve 2–3 pilot measures, reviewer staffing and editorial rubric                                             | Product/editorial owner         | M0-02                                   | Human decision pending; B/G/H proposed only |
+| M1-01  | Authorized editorial workflow, snapshots/extraction, reviewed evidence slice, corrections/freshness; E-01–E-03 | Codex + editorial lead          | M0-01–M0-03                             | Pending                                     |
+| M2-01  | Organization inclusion, verified endorsements, reproducible weights/coverage; O-01–O-03                        | Codex + verifier                | M1-01, human inclusion policy           | Pending                                     |
+| M3-01  | Reviewed applicability, unknowns, fixed-point math and conditional rules; P-01–P-04                            | Codex + legal/fiscal reviewer   | M1-01                                   | Pending                                     |
+| M4-01  | Independent worksheet layers and preregistered comprehension evaluation; C-03, T-06                            | Codex + research owner          | M2-01, M3-01                            | Pending                                     |
+| M5-01  | Reconciled complete SF representation, monitoring and review throughput                                        | Editorial lead + Codex          | M4 technical gates                      | Pending                                     |
+| M6-01  | Separate statewide pack and cross-scope composition                                                            | State editor + Codex            | Stable M4 contracts, M5 pattern         | Pending                                     |
+| M7-01  | Interface comparison and adapter certification                                                                 | Product owner + Codex           | Stable M4 contracts                     | Pending                                     |
+| SEC-01 | Source rights, editorial authorization, threat model, accessibility, jurisdiction-specific legal review        | Maintainer + designated experts | Before public launch                    | Pending                                     |
+
+M0's technical synthetic exit can be reproduced now; M0 overall remains open until source inventory and human decisions are resolved. Merging the PR does not automatically close M0-01; maintainer acceptance remains pending. Before M1 real ingestion, reassess the release-candidate SQLite API and measure/adjust the synthetic 1 MiB pack limit. M2-01/M3-01 must add the actual evidence-invariance tests once lens and impact calculations exist. M2/M3 mathematical edge-case gates, MCP conformance, real editorial approval and public release gates have not passed.

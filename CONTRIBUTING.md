@@ -8,4 +8,4 @@ Keep evidence independent of organization weights and personal circumstances. Ca
 
 Use clearly labeled synthetic data for initial contracts and tests. Real pilot measures, editorial rubric, organization inclusion, rule approval, public releases, and interface selection require human decisions. Record conflicts between the specifications for resolution rather than silently changing scope.
 
-The repository currently contains documentation only. Formatting, type checks, CI, schemas, and fixture tests remain M0 work. Propose architecture decisions before changing the baseline; do not add a license or assign source redistribution rights without an owner decision.
+Use Node 24, install with `npm ci`, and run `npm run check` before submitting. Tests and builds need no network after dependencies are installed. Regenerate contract schemas with `npm run schemas`; never edit generated schemas alone. The original planning documents are excluded from formatting to preserve their supplied text. Propose architecture decisions before changing the baseline; do not add a license or assign source redistribution rights without an owner decision.

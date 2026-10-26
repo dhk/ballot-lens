@@ -1,0 +1,28 @@
+{
+  "name": "ballot-lens",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test --test-isolation=none dist/tests/*.test.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "schemas": "npm run build && node dist/scripts/export-schemas.js",
+    "schemas:check": "npm run build && node dist/scripts/export-schemas.js --check",
+    "check": "npm run format:check && npm run typecheck && npm test && npm run schemas:check",
+    "cli": "node dist/apps/cli/src/main.js"
+  },
+  "dependencies": {
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "prettier": "3.9.10",
+    "typescript": "5.9.3"
+  }
+}
