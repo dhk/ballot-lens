@@ -11,6 +11,8 @@ import {
 import { execute } from "../../../packages/application/src/index.js";
 import { DomainError } from "../../../packages/domain/src/index.js";
 
+class UsageError extends Error {}
+
 export function run(args: string[], write: (value: string) => void): number {
   try {
     const [command, packPath, inputPath] = args;
@@ -19,7 +21,7 @@ export function run(args: string[], write: (value: string) => void): number {
       !["validate", "request", "import"].includes(command ?? "") ||
       args.length !== (command === "validate" ? 2 : 3)
     )
-      throw new Error(
+      throw new UsageError(
         "Usage: validate PACK | request PACK REQUEST | import PACK DATABASE",
       );
     const pack = loadPack(packPath);
@@ -34,7 +36,10 @@ export function run(args: string[], write: (value: string) => void): number {
       );
       return 0;
     }
-    if (!inputPath) throw new Error("Missing input path.");
+    if (!inputPath)
+      throw new UsageError(
+        "Usage: validate PACK | request PACK REQUEST | import PACK DATABASE",
+      );
     if (command === "import") {
       const db = new SqliteReleaseRepository(inputPath);
       try {
@@ -56,8 +61,14 @@ export function run(args: string[], write: (value: string) => void): number {
     write(
       JSON.stringify(
         errorResponse(
-          error instanceof DomainError ? error.code : "INVALID_INPUT",
-          "CLI input could not be processed.",
+          error instanceof DomainError
+            ? error.code
+            : error instanceof UsageError
+              ? "INVALID_INPUT"
+              : "INTERNAL_ERROR",
+          error instanceof UsageError
+            ? error.message
+            : "CLI input could not be processed.",
         ),
       ),
     );

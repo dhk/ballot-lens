@@ -51,17 +51,35 @@ export class SqliteReleaseRepository implements ReleaseRepository {
   private readonly db: DatabaseSync;
   constructor(path: string) {
     this.db = new DatabaseSync(path);
-    const migration = this.db.prepare("PRAGMA user_version").get();
-    if (Number(migration?.user_version) > 1) {
+    try {
+      const migration = this.db.prepare("PRAGMA user_version").get();
+      const schemaVersion = Number(migration?.user_version);
+      if (schemaVersion > 1)
+        fail("INVALID_PACK", "Unsupported storage schema version.");
+      if (
+        schemaVersion === 0 &&
+        this.db
+          .prepare(
+            "SELECT name FROM sqlite_schema WHERE type = 'table' AND name NOT GLOB 'sqlite_*' AND name <> 'releases' LIMIT 1",
+          )
+          .get()
+      ) {
+        fail("INVALID_PACK", "Refusing to adopt an unrelated database.");
+      }
+      this.db
+        .exec(`CREATE TABLE IF NOT EXISTS releases (pack_id TEXT NOT NULL, release_id TEXT NOT NULL UNIQUE, content_hash TEXT NOT NULL, document TEXT NOT NULL, PRIMARY KEY(pack_id,release_id));
+        CREATE TRIGGER IF NOT EXISTS releases_no_update BEFORE UPDATE ON releases BEGIN SELECT RAISE(ABORT, 'immutable release'); END;
+        CREATE TRIGGER IF NOT EXISTS releases_no_delete BEFORE DELETE ON releases BEGIN SELECT RAISE(ABORT, 'immutable release'); END;
+        CREATE TRIGGER IF NOT EXISTS releases_no_replace BEFORE INSERT ON releases
+        WHEN EXISTS (SELECT 1 FROM releases WHERE release_id = NEW.release_id)
+        BEGIN SELECT RAISE(ABORT, 'immutable release'); END;
+        PRAGMA user_version = 1;`);
+    } catch (error) {
       this.db.close();
-      fail("INVALID_PACK", "Unsupported storage schema version.");
+      throw error;
     }
-    this.db
-      .exec(`CREATE TABLE IF NOT EXISTS releases (pack_id TEXT NOT NULL, release_id TEXT NOT NULL UNIQUE, content_hash TEXT NOT NULL, document TEXT NOT NULL, PRIMARY KEY(pack_id,release_id));
-      CREATE TRIGGER IF NOT EXISTS releases_no_update BEFORE UPDATE ON releases BEGIN SELECT RAISE(ABORT, 'immutable release'); END;
-      CREATE TRIGGER IF NOT EXISTS releases_no_delete BEFORE DELETE ON releases BEGIN SELECT RAISE(ABORT, 'immutable release'); END;
-      PRAGMA user_version = 1;`);
   }
+
   importPack(input: unknown): void {
     const pack = verifyPack(input);
     const document = canonicalJson(pack);

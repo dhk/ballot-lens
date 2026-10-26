@@ -28,7 +28,7 @@ import {
 import { execute } from "../packages/application/src/index.js";
 import { handleJson } from "../adapters/json/src/index.js";
 import { evaluateConformance } from "../packages/evaluation/src/index.js";
-import { loadPack } from "../packages/ingest/src/index.js";
+import { loadPack, readBoundedJson } from "../packages/ingest/src/index.js";
 
 const fixture = loadPack("packs/synthetic/pack.json");
 const originalRequest = JSON.parse(
@@ -75,43 +75,44 @@ test("all identifier kinds require a namespaced kind, not a display label", () =
     assert.equal(schema.safeParse("measure:demo").success, false);
   }
 });
-for (const mutate of [
-  (p: Pack) => p.measures.push(p.measures[0]!),
-  (p: Pack) => {
+const invalidPackCases: Record<string, (p: Pack) => unknown> = {
+  "duplicate measure ID": (p) => p.measures.push(p.measures[0]!),
+  "finding election mismatch": (p) => {
     p.findings[0]!.scope.electionId = "election:synthetic:other";
   },
-  (p: Pack) => {
+  "missing measure": (p) => {
     p.findings[0]!.measureId = "measure:synthetic:absent";
   },
-  (p: Pack) => {
+  "excerpt mismatch": (p) => {
     p.findings[0]!.evidence[0]!.excerpt = "not in the source";
   },
-  (p: Pack) => {
+  "citation beyond text": (p) => {
     p.findings[0]!.evidence[0]!.end = 9999;
   },
-  (p: Pack) => {
+  "tampered snapshot": (p) => {
     p.snapshots[0]!.content += "tamper";
   },
-  (p: Pack) => {
+  "missing snapshot hash": (p) => {
     p.sources[0]!.snapshotHash = "sha256:" + "0".repeat(64);
   },
-  (p: Pack) => {
+  "model approval": (p) => {
     p.reviewEvents[1]!.actorType = "model";
   },
-  (p: Pack) => {
+  "missing review history": (p) => {
     p.reviewEvents = [];
   },
-  (p: Pack) => {
+  "reviewer mismatch": (p) => {
     p.reviewEvents[1]!.actor = "different reviewer";
   },
-  (p: Pack) => {
+  "out-of-order review": (p) => {
     p.reviewEvents[1]!.at = "2098-01-01T00:00:00Z";
   },
-  (p: Pack) => {
+  "missing synthetic label": (p) => {
     p.title = "Real measures";
   },
-])
-  test(`invalid pack boundary ${mutate.toString()}`, () => {
+};
+for (const [label, mutate] of Object.entries(invalidPackCases))
+  test(`invalid pack: ${label}`, () => {
     const p = clone();
     mutate(p);
     invalid(p);
@@ -270,6 +271,27 @@ test("SQLite persists immutable pinned releases, allows idempotent import, and r
     const raw = new DatabaseSync(path);
     assert.throws(() => raw.exec("DELETE FROM releases"));
     assert.throws(() => raw.exec("UPDATE releases SET document='{}'"));
+    raw.exec("PRAGMA recursive_triggers=OFF");
+    assert.throws(
+      () =>
+        raw
+          .prepare("INSERT OR REPLACE INTO releases VALUES (?, ?, ?, ?)")
+          .run(fixture.id, fixture.releaseId, "tampered", "{}"),
+      /immutable release/,
+    );
+    assert.throws(
+      () =>
+        raw
+          .prepare("REPLACE INTO releases VALUES (?, ?, ?, ?)")
+          .run("pack:synthetic:collision", fixture.releaseId, "tampered", "{}"),
+      /immutable release/,
+    );
+    assert.equal(
+      raw
+        .prepare("SELECT document FROM releases WHERE release_id = ?")
+        .get(fixture.releaseId)?.document,
+      canonicalJson(fixture),
+    );
     raw.close();
   } finally {
     rmSync(dir, { recursive: true, force: true });
@@ -388,8 +410,8 @@ test("input weights and circumstance values are bounded, with explicit unknown d
     "INVALID_INPUT",
   );
 });
-test("evidence cannot be influenced by preference/profile permutations at the boundary", () => {
-  const before = execute(originalRequest, repo());
+test("reserved worksheet accepts bounded input shapes and remains unavailable", () => {
+  // TODO(M2-01/M3-01): exercise evidence invariance with functioning lens and impact calculations.
   for (const weight of [0, 1, 2, 3])
     for (const value of [undefined, false, true, "unknown"]) {
       const inputs = {
@@ -403,7 +425,6 @@ test("evidence cannot be influenced by preference/profile permutations at the bo
         code(request("build_worksheet", inputs)),
         "UNAVAILABLE_ANALYSIS",
       );
-      assert.deepEqual(execute(originalRequest, repo()), before);
     }
   assert.equal(
     code({
@@ -471,14 +492,17 @@ test("request size, cancellation and generic errors never echo sensitive input",
   const cancelled = execute(originalRequest, repo(), { cancelled: () => true });
   assert.equal(cancelled.ok, false);
   if (!cancelled.ok) assert.equal(cancelled.error.code, "CANCELLED");
-  assert.equal(
-    execute(originalRequest, {
-      getRelease: () => {
-        throw Error(secret);
-      },
-    }).ok,
-    false,
-  );
+  const internal = execute(originalRequest, {
+    getRelease: () => {
+      throw Error(secret);
+    },
+  });
+  assert.equal(internal.ok, false);
+  if (!internal.ok) {
+    assert.equal(internal.error.code, "INTERNAL_ERROR");
+    assert.equal(internal.error.message, "Operation could not be completed.");
+  }
+  assert.ok(!JSON.stringify(internal).includes(secret));
 });
 test("real packs cannot be served before editorial authorization is implemented", () => {
   const p = clone();
@@ -492,24 +516,32 @@ test("real packs cannot be served before editorial authorization is implemented"
   p.sources[0]!.rights = "unknown";
   invalid(p);
 });
-test("all implemented operations pass response validation and direct/JSON/CLI conformance", () => {
-  const requests = [
-    originalRequest,
-    request("list_elections"),
-    request("list_measures", { limit: 1 }),
-    request("get_evidence", { measureId: fixture.measures[0]!.id }),
-    request("get_source_locator", {
-      locator: fixture.findings[0]!.evidence[0],
-    }),
-  ];
-  const dir = mkdtempSync(join(tmpdir(), "ballot-cli-"));
+test("application, JSON, and CLI outputs match committed golden responses for every operation", () => {
+  const requests = JSON.parse(
+    readFileSync("packs/synthetic/requests.json", "utf8"),
+  ) as unknown[];
+  const goldens = JSON.parse(
+    readFileSync("packs/synthetic/responses.json", "utf8"),
+  ) as unknown[];
+  assert.equal(requests.length, 11);
+  assert.equal(goldens.length, requests.length);
+  const dir = mkdtempSync(join(tmpdir(), "ballot-golden-"));
   try {
-    for (const r of requests) {
-      const expected = execute(r, repo());
-      assert.equal(responseSchema.safeParse(expected).success, true);
-      assert.equal(evaluateConformance(r, repo()), true);
+    for (const [index, request] of requests.entries()) {
+      const expected = responseSchema.parse(goldens[index]);
+      assert.equal(
+        evaluateConformance(execute(request, repo()), expected),
+        true,
+      );
+      assert.equal(
+        evaluateConformance(
+          handleJson(JSON.stringify(request), repo()),
+          expected,
+        ),
+        true,
+      );
       const path = join(dir, "request.json");
-      writeFileSync(path, JSON.stringify(r));
+      writeFileSync(path, JSON.stringify(request));
       let output = "";
       const status = run(
         ["request", "packs/synthetic/pack.json", path],
@@ -517,9 +549,13 @@ test("all implemented operations pass response validation and direct/JSON/CLI co
           output = value;
         },
       );
-      assert.equal(status, 0);
-      assert.deepEqual(JSON.parse(output), expected);
+      assert.equal(status, expected.ok ? 0 : 1);
+      assert.equal(evaluateConformance(JSON.parse(output), expected), true);
     }
+    const brief = responseSchema.parse(goldens[2]);
+    assert.equal(brief.ok, true);
+    assert.equal(evaluateConformance({ ...brief, warnings: [] }, brief), false);
+    assert.equal(evaluateConformance({ ok: true }, brief), false);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
@@ -602,4 +638,133 @@ test("unsupported pack schema and CLI failures are explicit and do not expose in
   );
   assert.ok(!output.includes("sensitive-profile-path"));
   assert.equal(responseSchema.safeParse(JSON.parse(output)).success, true);
+});
+
+test("CLI usage is visible, safe, and distinct from file processing errors", () => {
+  for (const args of [
+    [],
+    ["request"],
+    ["unknown", "private-path"],
+    ["validate", "private-path", "extra"],
+  ]) {
+    let output = "";
+    assert.equal(
+      run(args, (value) => {
+        output = value;
+      }),
+      1,
+    );
+    const result = responseSchema.parse(JSON.parse(output));
+    assert.equal(result.ok, false);
+    if (!result.ok) {
+      assert.equal(result.error.code, "INVALID_INPUT");
+      assert.equal(
+        result.error.message,
+        "Usage: validate PACK | request PACK REQUEST | import PACK DATABASE",
+      );
+    }
+    assert.ok(!output.includes("private-path"));
+  }
+  assert.equal(code(undefined), "INVALID_INPUT");
+});
+test("stored hash corruption is rejected after an operator bypasses write guards", () => {
+  const dir = mkdtempSync(join(tmpdir(), "ballot-tamper-"));
+  try {
+    const path = join(dir, "releases.db");
+    const db = new SqliteReleaseRepository(path);
+    db.importPack(fixture);
+    db.close();
+    const raw = new DatabaseSync(path);
+    raw.exec("DROP TRIGGER releases_no_update");
+    const altered = clone();
+    altered.title += " tampered";
+    raw
+      .prepare("UPDATE releases SET document=? WHERE release_id=?")
+      .run(canonicalJson(altered), fixture.releaseId);
+    raw.close();
+    const reopened = new SqliteReleaseRepository(path);
+    try {
+      assert.throws(
+        () =>
+          reopened.getRelease({
+            packId: fixture.id,
+            releaseId: fixture.releaseId,
+          }),
+        /Stored release hash mismatch/,
+      );
+    } finally {
+      reopened.close();
+    }
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+test("bounded local reads reject oversized files, directories, missing files and malformed JSON", () => {
+  const dir = mkdtempSync(join(tmpdir(), "ballot-bounds-"));
+  const rejects = (path: string, expected: string) =>
+    assert.throws(
+      () => readBoundedJson(path),
+      (e: unknown) => e instanceof DomainError && e.code === expected,
+    );
+  try {
+    const oversized = join(dir, "oversized.json");
+    writeFileSync(oversized, Buffer.alloc(1_048_577, 32));
+    rejects(oversized, "PAYLOAD_TOO_LARGE");
+    rejects(dir, "INVALID_INPUT");
+    rejects(join(dir, "missing"), "INVALID_INPUT");
+    const invalid = join(dir, "invalid.json");
+    writeFileSync(invalid, "not JSON");
+    rejects(invalid, "INVALID_INPUT");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+test("unrelated version-zero databases are not adopted or modified", () => {
+  const dir = mkdtempSync(join(tmpdir(), "ballot-unrelated-"));
+  try {
+    const path = join(dir, "unrelated.db");
+    const raw = new DatabaseSync(path);
+    raw.exec(
+      "CREATE TABLE unrelated(value TEXT); INSERT INTO unrelated VALUES ('keep');",
+    );
+    raw.close();
+    assert.throws(() => new SqliteReleaseRepository(path), /Refusing to adopt/);
+    const unchanged = new DatabaseSync(path);
+    assert.equal(
+      unchanged.prepare("PRAGMA user_version").get()?.user_version,
+      0,
+    );
+    assert.equal(
+      unchanged.prepare("SELECT value FROM unrelated").get()?.value,
+      "keep",
+    );
+    assert.deepEqual(
+      unchanged
+        .prepare("SELECT name FROM sqlite_schema WHERE type='table'")
+        .all()
+        .map((r) => r.name),
+      ["unrelated"],
+    );
+    unchanged.close();
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+test("structural contracts enforce one election, namespaced event IDs, and explicit review origins", () => {
+  const multiple = clone();
+  multiple.elections.push({
+    ...multiple.elections[0]!,
+    id: "election:synthetic:other",
+  });
+  assert.equal(packSchema.safeParse(multiple).success, false);
+  const badId = clone();
+  badId.reviewEvents[0]!.id = "free text";
+  assert.equal(packSchema.safeParse(badId).success, false);
+  const nullOrigin = {
+    ...clone(),
+    reviewEvents: fixture.reviewEvents.map((event, index) =>
+      index === 0 ? { ...event, from: null } : event,
+    ),
+  };
+  assert.equal(packSchema.safeParse(nullOrigin).success, false);
 });

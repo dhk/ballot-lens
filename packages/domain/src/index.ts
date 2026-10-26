@@ -210,7 +210,7 @@ export function validatePack(input: unknown): Pack {
     );
   return pack;
 }
-export function composePacks(inputs: readonly Pack[]): Pack[] {
+export function composePacks(inputs: readonly unknown[]): Pack[] {
   const packs = inputs.map(validatePack);
   const names = new Set<string>();
   const releases = new Set<string>();

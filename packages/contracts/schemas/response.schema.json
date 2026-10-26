@@ -13,6 +13,7 @@
               "type": "string",
               "enum": [
                 "INVALID_INPUT",
+                "INTERNAL_ERROR",
                 "UNSUPPORTED_VERSION",
                 "MISSING_RELEASE",
                 "SCOPE_MISMATCH",

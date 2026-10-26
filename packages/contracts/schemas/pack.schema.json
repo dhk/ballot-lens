@@ -70,7 +70,7 @@
     },
     "elections": {
       "minItems": 1,
-      "maxItems": 100,
+      "maxItems": 1,
       "type": "array",
       "items": {
         "type": "object",
@@ -451,7 +451,11 @@
       "items": {
         "type": "object",
         "properties": {
-          "id": { "type": "string", "minLength": 1, "maxLength": 10000 },
+          "id": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^event:[a-z0-9][a-z0-9._-]*(?::[a-z0-9][a-z0-9._-]*)+$"
+          },
           "findingRevisionId": {
             "type": "string",
             "maxLength": 160,
@@ -460,19 +464,14 @@
           "actor": { "type": "string", "minLength": 1, "maxLength": 10000 },
           "actorType": { "type": "string", "enum": ["human", "model"] },
           "from": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": [
-                  "draft",
-                  "in_review",
-                  "approved",
-                  "rejected",
-                  "superseded",
-                  "retracted"
-                ]
-              },
-              { "type": "null" }
+            "type": "string",
+            "enum": [
+              "draft",
+              "in_review",
+              "approved",
+              "rejected",
+              "superseded",
+              "retracted"
             ]
           },
           "to": {

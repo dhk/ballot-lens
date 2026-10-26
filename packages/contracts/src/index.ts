@@ -26,6 +26,7 @@ export const ids = Object.fromEntries(
     "impact_rule",
     "pack",
     "release",
+    "event",
   ].map((kind) => [kind, id(kind)]),
 );
 export const scopeSchema = z.strictObject({
@@ -97,11 +98,11 @@ export const findingSchema = z.strictObject({
   supersedes: id("finding_revision").nullable(),
 });
 export const reviewEventSchema = z.strictObject({
-  id: text,
+  id: id("event"),
   findingRevisionId: id("finding_revision"),
   actor: text,
   actorType: z.enum(["human", "model"]),
-  from: reviewStateSchema.nullable(),
+  from: reviewStateSchema,
   to: reviewStateSchema,
   at: timestamp,
   reason: text,
@@ -138,7 +139,7 @@ export const packSchema = z.strictObject({
     status: z.literal("passed"),
     validatorVersion: z.literal("0.1.0"),
   }),
-  elections: z.array(electionSchema).min(1).max(100),
+  elections: z.array(electionSchema).length(1),
   measures: z.array(measureSchema).max(1000),
   sources: z.array(sourceSchema).max(5000),
   snapshots: z.array(snapshotSchema).max(5000),
@@ -200,17 +201,38 @@ export const operationInputs = {
   get_source_locator: z.strictObject({ locator: locatorSchema }),
 };
 export type Operation = keyof typeof operationInputs;
-const requestVariants = Object.entries(operationInputs).map(
-  ([operation, inputs]) =>
-    z.strictObject({ ...envelope, operation: z.literal(operation), inputs }),
-);
-export const requestSchema = z.discriminatedUnion(
-  "operation",
-  requestVariants as [
-    (typeof requestVariants)[number],
-    ...typeof requestVariants,
-  ],
-);
+function requestVariant<K extends Operation, S extends z.ZodType>(
+  operation: K,
+  inputs: S,
+) {
+  return z.strictObject({
+    ...envelope,
+    operation: z.literal(operation),
+    inputs,
+  });
+}
+export const requestSchema = z.discriminatedUnion("operation", [
+  requestVariant("list_elections", operationInputs.list_elections),
+  requestVariant("list_measures", operationInputs.list_measures),
+  requestVariant("get_measure_brief", operationInputs.get_measure_brief),
+  requestVariant("get_evidence", operationInputs.get_evidence),
+  requestVariant("list_organizations", operationInputs.list_organizations),
+  requestVariant("get_endorsements", operationInputs.get_endorsements),
+  requestVariant(
+    "calculate_endorsement_lens",
+    operationInputs.calculate_endorsement_lens,
+  ),
+  requestVariant(
+    "list_circumstance_questions",
+    operationInputs.list_circumstance_questions,
+  ),
+  requestVariant(
+    "evaluate_personal_impact",
+    operationInputs.evaluate_personal_impact,
+  ),
+  requestVariant("build_worksheet", operationInputs.build_worksheet),
+  requestVariant("get_source_locator", operationInputs.get_source_locator),
+]);
 export type Request = z.infer<typeof requestSchema>;
 const pagination = z.strictObject({
   offset: z.int().min(0),
@@ -220,6 +242,7 @@ const pagination = z.strictObject({
 });
 export const errorCodeSchema = z.enum([
   "INVALID_INPUT",
+  "INTERNAL_ERROR",
   "UNSUPPORTED_VERSION",
   "MISSING_RELEASE",
   "SCOPE_MISMATCH",

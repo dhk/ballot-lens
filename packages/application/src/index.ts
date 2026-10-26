@@ -4,7 +4,6 @@ import {
   MAX_BYTES,
   requestSchema,
   responseSchema,
-  type Pack,
   type ReleaseRef,
   type Response,
   type Finding,
@@ -34,7 +33,9 @@ export function execute(
   try {
     if (context.cancelled()) fail("CANCELLED", "Operation cancelled.");
     const encoded = JSON.stringify(input);
-    if (!encoded || new TextEncoder().encode(encoded).length > MAX_BYTES)
+    if (encoded === undefined)
+      fail("INVALID_INPUT", "Request must be a JSON value.");
+    if (new TextEncoder().encode(encoded).length > MAX_BYTES)
       fail("PAYLOAD_TOO_LARGE", "Request exceeds the 1 MiB limit.");
     if (
       typeof input === "object" &&
@@ -52,7 +53,7 @@ export function execute(
         const pack = repository.getRelease(ref);
         if (pack === undefined)
           fail("MISSING_RELEASE", "Pinned release is unavailable.");
-        return pack as Pack;
+        return pack;
       }),
     );
     if (
@@ -80,9 +81,9 @@ export function execute(
       .flatMap((p) => p.findings)
       .filter((f) => f.state === "approved" && !f.stale)
       .sort((a, b) => a.id.localeCompare(b.id, "en"));
-    const inputs = request.inputs as Record<string, unknown>;
+    const inputs = request.inputs;
     const measure =
-      typeof inputs.measureId === "string"
+      "measureId" in inputs
         ? allMeasures.find((m) => m.id === inputs.measureId)
         : undefined;
     if ("measureId" in inputs && !measure)
@@ -90,9 +91,10 @@ export function execute(
     const selected = measure
       ? findings.filter((f) => f.measureId === measure.id)
       : findings;
-    const paginate = <T>(items: T[]) => {
-      const offset = Number(inputs.offset ?? 0);
-      const limit = Number(inputs.limit ?? 50);
+    const paginate = <T>(
+      items: T[],
+      { offset, limit }: { offset: number; limit: number },
+    ) => {
       return {
         items: items.slice(offset, offset + limit),
         pagination: {
@@ -111,27 +113,24 @@ export function execute(
           packs
             .flatMap((p) => p.elections)
             .sort((a, b) => a.id.localeCompare(b.id, "en")),
+          request.inputs,
         );
         break;
       case "list_measures":
-        data = paginate(allMeasures);
+        data = paginate(allMeasures, request.inputs);
         break;
       case "get_measure_brief":
         data = { measure, findings: selected };
         returnedFindings = selected;
         break;
       case "get_evidence": {
-        const result = paginate(selected);
+        const result = paginate(selected, request.inputs);
         data = result;
         returnedFindings = result.items;
         break;
       }
       case "get_source_locator": {
-        const locator = inputs.locator;
-        if (!locator || typeof locator !== "object")
-          fail("INVALID_INPUT", "Missing locator.");
-        const parsedLocator =
-          locator as Pack["findings"][number]["evidence"][number];
+        const parsedLocator = request.inputs.locator;
         const linked = findings.some((f) =>
           [...f.evidence, ...f.counterevidence].some(
             (l) => JSON.stringify(l) === JSON.stringify(parsedLocator),
@@ -169,10 +168,7 @@ export function execute(
       ),
     ].sort();
     if (request.operation === "get_source_locator")
-      sourceRevisionIds.push(
-        (inputs.locator as Pack["findings"][number]["evidence"][number])
-          .sourceRevisionId,
-      );
+      sourceRevisionIds.push(request.inputs.locator.sourceRevisionId);
     const result = responseSchema.parse({
       contractVersion: CONTRACT_VERSION,
       ok: true,
@@ -194,7 +190,7 @@ export function execute(
     return result;
   } catch (error) {
     const code: ErrorCode =
-      error instanceof DomainError ? error.code : "INVALID_INPUT";
+      error instanceof DomainError ? error.code : "INTERNAL_ERROR";
     return errorResponse(
       code,
       error instanceof DomainError
