@@ -12,7 +12,7 @@ The initial scope is San Francisco local measures, followed by separate Californ
 
 ## Project status
 
-Documentation bootstrap only. No application, validated ballot corpus, schemas, runtime, or test suite has been implemented. The specifications are proposed v0.1 documents; acceptance gates are targets, not measured results.
+The M0 technical foundation is implemented: strict TypeScript, versioned schemas, an offline synthetic pack, citation/review validation, immutable local release storage, a CLI, and conformance tests. There is no real ballot corpus or public product yet. Source reconciliation and human pilot/rubric decisions remain open; see the [backlog](docs/backlog.md). The v0.1 specifications describe later work as well as implemented foundations.
 
 ## Start here
 
@@ -28,11 +28,45 @@ The proposed baseline is strict TypeScript, schema-validated JSON, SQLite local 
 
 The core must work offline against validated, immutable release packs without a UI, MCP server, network, or model provider. MCP is a read-only adapter; the consumer interface remains undecided. Planned components are `packages/{domain,contracts,ingest,storage,evaluation}`, `apps/cli`, `adapters`, and `packs`.
 
+## Run it
+
+Requires Node 24 and npm. Install dependencies once (network required):
+
+```bash
+npm ci
+npm run check
+npm run cli -- validate packs/synthetic/pack.json
+npm run cli -- request packs/synthetic/pack.json packs/synthetic/request.json
+```
+
+After installation, build and tests run offline without a UI, MCP server, network, or model provider. `npm run check` runs formatting, strict type checks, the build, fixture/conformance tests, and generated-schema drift checks. The CLI returns JSON and exits nonzero on failure.
+
+To import an immutable synthetic release into SQLite:
+
+```bash
+npm run cli -- import packs/synthetic/pack.json /tmp/ballot-lens.sqlite
+```
+
+The pack is fictional and clearly labeled. Real packs cannot be served until editorial authorization exists. Endorsement, impact, and worksheet operations currently return `UNAVAILABLE_ANALYSIS`; no calculations or recommendations are fabricated.
+
+## Implementation map
+
+| Directory                   | Responsibility                                                           |
+| --------------------------- | ------------------------------------------------------------------------ |
+| `packages/contracts`        | Versioned schemas/types and generated JSON Schema                        |
+| `packages/domain`           | Pack references, citations, review histories, composition validation     |
+| `packages/application`      | Transport-neutral operations and repository port                         |
+| `packages/storage`          | Immutable SQLite releases, isolated memory repository, hash verification |
+| `packages/ingest`           | Bounded local pack loading; network ingestion is later work              |
+| `packages/evaluation`       | Adapter conformance harness                                              |
+| `apps/cli`, `adapters/json` | Local CLI and a second non-MCP adapter                                   |
+| `packs/synthetic`           | Fictional pack, source originals and request fixtures                    |
+
+Read [contract behavior](docs/contracts.md), [architecture decision](docs/decisions/0001-m0-foundation.md), and [source discovery/gaps](docs/inventory/sf-2026-11-03.md) before extending the implementation. MCP transport, final interface, editorial policy, and real pilot selection remain undecided.
+
 ## Next milestone
 
-M0 establishes contracts, synthetic fixtures, source inventory, architecture decisions, and development checks. It is not complete in this commit. Follow M0–M7 in the roadmap; real pilot selection and editorial review require human approval.
-
-No installation or test commands are available yet. Add reproducible setup and validation instructions when the implementation tooling is introduced.
+Finish the official source inventory and human pilot/rubric decisions, then begin M1's reviewed SF evidence slice. M2/M3 scoring, fixed-point impact rules, cross-scope worksheets, MCP, user studies, and public release gates remain future work. No live data is fetched during domain operations.
 
 ## Repository scaffold
 

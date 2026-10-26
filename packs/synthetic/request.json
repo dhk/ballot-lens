@@ -1,0 +1,17 @@
+{
+  "contractVersion": "0.1.0",
+  "operation": "get_measure_brief",
+  "scope": {
+    "jurisdictionId": "jurisdiction:synthetic:demo",
+    "electionId": "election:synthetic:2099-11-03"
+  },
+  "releases": [
+    {
+      "packId": "pack:synthetic:demo",
+      "releaseId": "release:synthetic:demo-v1"
+    }
+  ],
+  "inputs": {
+    "measureId": "measure:synthetic:demo-a"
+  }
+}
