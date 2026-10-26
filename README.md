@@ -1,64 +1,39 @@
-# repo-template
+# Ballot Lens
 
-A starting point for new personal repos, distilled from patterns already
-working across dhk's other repos (`work-ledger`, `familiar-places`, `fossil`,
-`crucible`, `skill-map`). Three goals drove the shape:
+Ballot Lens is a planned, interface-independent tool for understanding ballot measures through three separate layers:
 
-- **Instructive** — a stranger, human or Claude, can orient fast.
-- **Build in public** — the repo's own files carry the argument; nothing
-  depends on private context to make sense.
-- **Workflow-visible** — session continuity is a file, not a lost thread.
+- Reviewed evidence with traceable sources and explicit uncertainty.
+- Organizational endorsements weighted only by organizations the user selects.
+- Provision-linked personal applicability and impact using optional circumstances.
 
-## Use it
+These layers never combine into a vote recommendation. Changing preferences or circumstances must never change evidence.
 
-```bash
-cp -r template/ ~/Documents/dev/<new-repo-name>
-cd ~/Documents/dev/<new-repo-name>
-# fill in the <placeholders> in README.md, CLAUDE.md, HANDOFF.md
-git init && git add -A && git commit -m "Initial scaffold from repo-template"
-```
+The initial scope is San Francisco local measures, followed by separate California statewide proposition packs. November 2026 is a pilot corpus, not a launch commitment.
 
-Then work through [`SETUP.md`](template/SETUP.md) — the repo *settings* a file
-copy cannot carry.
+## Project status
 
-## What's in it, and why
+Documentation bootstrap only. No application, validated ballot corpus, schemas, runtime, or test suite has been implemented. The specifications are proposed v0.1 documents; acceptance gates are targets, not measured results.
 
-| File | Answers | Pattern it's drawn from |
-|---|---|---|
-| `README.md` | What is this, why does it exist, what's actually done vs. planned | familiar-places (names its competitor), work-ledger (status honesty, links design issues instead of restating them), crucible ("check me out") |
-| `CLAUDE.md` | Stack, architecture, conventions, **workflow rules** | Every repo's CLAUDE.md; workflow rules specifically from fossil |
-| `HANDOFF.md` | Where did I leave off, what's next, known gotchas | familiar-places/handoff.md |
-| `docs/snapshots/` | Frozen record of a design session or pivot, dated | fossil/context-snapshot.md, reading-with-ears' dated snapshots (relocated out of repo root — see below) |
-| `SETUP.md` | The repo settings that a file copy cannot carry — branch protection, Actions permissions, Pages, secrets, and the local `gh` scope | Learned by hitting each one; see the file's closing note |
-| `docs/design/` | Why a decision was made, not just what it is | praxis's four-question CONTRIBUTING.md frame, crucible/docs/concepts |
-| `.scratch/` (gitignored) | Ephemeral working files — never committed | adventures-in-ai, work-ledger, crucible, reading-with-ears all already do this |
-| `LICENSE` | Building in public means someone else can actually use this | Present in nearly every repo already |
+## Start here
 
-## What's deliberately left out by default
+- [Product and engineering requirements](docs/requirements.md)
+- [Implementation roadmap](docs/roadmap.md)
+- [Document provenance](docs/README.md)
+- [Contributing](CONTRIBUTING.md)
+- [Agent instructions](AGENTS.md)
 
-`CONTRIBUTING.md` and `.github/ISSUE_TEMPLATE/` aren't in the base template —
-most of these repos are solo build-in-public, not soliciting outside PRs. Add
-them per-repo (skill-map's `CONTRIBUTING.md` is a good model) once a project
-actually wants contributors.
+## Architecture direction
 
-CI workflows (`.github/workflows/`) are project-specific by nature — copy the
-relevant one from `praxis`, `crucible`, `skill-map`, `tricorder`, or (for an
-Astro/Node static site — build + non-blocking `astro check`, since a
-type-check step usually needs to start informational until a codebase earns
-a hard gate) `DHK-website`, rather than templating a generic one that won't
-fit.
+The proposed baseline is strict TypeScript, schema-validated JSON, SQLite local storage, and content-addressed source snapshots. Dependency direction is clients → adapters → application operations → domain; infrastructure implements storage and source ports.
 
-## HANDOFF.md vs. docs/snapshots/ — the split that matters
+The core must work offline against validated, immutable release packs without a UI, MCP server, network, or model provider. MCP is a read-only adapter; the consumer interface remains undecided. Planned components are `packages/{domain,contracts,ingest,storage,evaluation}`, `apps/cli`, `adapters`, and `packs`.
 
-`HANDOFF.md` is **one file, always current, overwritten each session** — the
-first thing a fresh session (you or Claude) should read: where things stand,
-what's next, what to watch out for.
+## Next milestone
 
-`docs/snapshots/YYYY-MM-DD-<topic>.md` is the opposite: **write-once,
-permanent** — the output of a design sprint or the reasoning behind a pivot,
-worth keeping forever.
+M0 establishes contracts, synthetic fixtures, source inventory, architecture decisions, and development checks. It is not complete in this commit. Follow M0–M7 in the roadmap; real pilot selection and editorial review require human approval.
 
-Don't let one collapse into the other. reading-with-ears' dated snapshot
-files committed loose at the repo root are the cautionary example — right
-instinct (capture the session), wrong location (repo root, not `docs/`;
-accumulating, not superseding a living handoff doc).
+No installation or test commands are available yet. Add reproducible setup and validation instructions when the implementation tooling is introduced.
+
+## Repository scaffold
+
+The original generic scaffold remains in `template/` for reference; it is not application code. Existing ownership configuration is preserved.
