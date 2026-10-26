@@ -12,7 +12,7 @@ The initial scope is San Francisco local measures, followed by separate Californ
 
 ## Project status
 
-The M0 technical foundation is implemented: strict TypeScript, versioned schemas, an offline synthetic pack, citation/review validation, immutable local release storage, a CLI, and conformance tests. There is no real ballot corpus or public product yet. Source reconciliation and human pilot/rubric decisions remain open; see the [backlog](docs/backlog.md). The v0.1 specifications describe later work as well as implemented foundations.
+The M0 technical foundation is implemented: strict TypeScript, versioned schemas, an offline synthetic pack, citation/review validation, immutable local release storage, a CLI, and conformance tests. There is no real ballot corpus or public product yet. The official SF local measure set is reconciled for the captured versions; source-rights/version review and human pilot/rubric decisions remain open; see the [backlog](docs/backlog.md). The v0.1 specifications describe later work as well as implemented foundations.
 
 ## Start here
 
